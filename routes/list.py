@@ -1,4 +1,3 @@
-# routes/list.py
 from fastapi import APIRouter
 from pydantic import BaseModel
 from helpers.database import get_uuids, get_nicks, get_ips

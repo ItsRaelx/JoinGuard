@@ -1,11 +1,11 @@
 import os
-from typing import Dict, List, Optional, Any
+from typing import Any
+from typing import Dict, Optional
+from typing import List
 
 from fastapi import HTTPException
 from motor.motor_asyncio import AsyncIOMotorClient
 from pymongo.errors import ConnectionFailure, OperationFailure
-from typing import Dict, List, Optional
-from bson import Int64
 
 # Get MONGO_URI from environment variable directly
 MONGO_URI = os.getenv("MONGO_URI")
@@ -58,7 +58,8 @@ async def get_ips() -> Dict[str, List[str]]:
     """
     try:
         pipeline = [
-            {"$group": {"_id": None, "ips": {"$addToSet": "$ip"}}},
+            {"$unwind": "$ips"},
+            {"$group": {"_id": None, "ips": {"$addToSet": "$ips"}}},
             {"$project": {"_id": 0, "ips": 1}}
         ]
         async for document in db.blacklist.aggregate(pipeline):
@@ -70,33 +71,23 @@ async def get_ips() -> Dict[str, List[str]]:
         raise HTTPException(status_code=500, detail="Database operation error")
 
 
-from typing import Dict, List, Optional
-from bson import Int64
-
 async def check_api_key(api_key: str) -> Optional[Dict[str, Any]]:
     """
     Check if the given API key is valid and not marked as spam.
     """
     try:
-        pipeline = [
-            {
-                "$match": {
-                    "keys": api_key,
-                    "spam": False
-                }
-            },
-            {
-                "$project": {
-                    "_id": 1,
-                    "spam": 1,
-                    "keys": 1
-                }
-            }
-        ]
-        async for document in db.api.aggregate(pipeline):
-            # Convert Int64 _id to string for JSON serialization
-            document['_id'] = str(document['_id'])
+        query = {
+            "_id": api_key,
+            "spam": False
+        }
+        document = await db.users.find_one(query)
+
+        if document:
+            # Convert discord NumberLong to string
+            if 'discord' in document and isinstance(document['discord'], int):
+                document['discord'] = str(document['discord'])
             return document
+
         return None
     except ConnectionFailure:
         raise HTTPException(status_code=503, detail="Database connection error")
