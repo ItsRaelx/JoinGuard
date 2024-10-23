@@ -38,6 +38,7 @@
             background-color: #1b7d9b;
             background-size: cover;
             background-position: center;
+            background-repeat: no-repeat;
         }
 
         .user-info {
@@ -372,7 +373,9 @@
 
                     const bannerElement = document.getElementById('user-banner');
                     if (data.banner) {
-                        const bannerUrl = `https://cdn.discordapp.com/banners/${data.id}/${data.banner}.png?size=480`;
+                        // Check if the banner is animated (GIF)
+                        const bannerFormat = data.banner.startsWith('a_') ? 'gif' : 'png';
+                        const bannerUrl = `https://cdn.discordapp.com/banners/${data.id}/${data.banner}.${bannerFormat}?size=480`;
                         bannerElement.style.backgroundImage = `url('${bannerUrl}')`;
                     } else if (data.banner_color) {
                         bannerElement.style.backgroundColor = data.banner_color;
