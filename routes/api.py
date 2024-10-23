@@ -1,26 +1,19 @@
 from typing import Optional
 
-from fastapi import APIRouter
-from fastapi import HTTPException
+from fastapi import APIRouter, HTTPException
 from pydantic import BaseModel
 
 from helpers.database import check_api_key
 
-api_router = APIRouter(
-    prefix="/api",
-    tags=["api"],
-)
-
+api_router = APIRouter(prefix="/api", tags=["api"])
 
 class LoginModel(BaseModel):
     _id: str
     discord: str
     spam: bool
 
-
 class LoginResponse(BaseModel):
     data: Optional[LoginModel] = None
-
 
 @api_router.get("/check", response_model=LoginResponse)
 async def read_nicks(api_key: str):

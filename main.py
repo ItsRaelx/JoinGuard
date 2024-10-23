@@ -3,20 +3,24 @@ import os
 from dotenv import load_dotenv
 from fastapi import FastAPI
 from fastapi.responses import FileResponse
+from fastapi.staticfiles import StaticFiles
 
-# Check if the .env file exists
+from routes.api import api_router
+from routes.list import list_router
+from routes.login import login_router
+from routes.report import report_router
+
+# Load environment variables
 env_path = '.env'
 if os.path.exists(env_path):
     load_dotenv(env_path)
 
 app = FastAPI()
 
-# Import and include router after FastAPI app is created
-from routes.list import list_router
-from routes.login import login_router
-from routes.api import api_router
-from routes.report import report_router
+# Mount static files
+app.mount("/static", StaticFiles(directory="public"), name="static")
 
+# Include routers
 app.include_router(list_router)
 app.include_router(login_router)
 app.include_router(api_router)
@@ -26,22 +30,11 @@ app.include_router(report_router)
 def read_root():
     return {"Status": "OK"}
 
-# Serve the index.html file
 @app.get("/main")
 def read_index():
-    return FileResponse("index.html")
+    return FileResponse("public/index.html")
 
 
-# Run the app
 if __name__ == "__main__":
     import uvicorn
-    import asyncio
-
-
-    async def main():
-        config = uvicorn.Config("main:app", host="0.0.0.0", port=8000, loop="asyncio")
-        server = uvicorn.Server(config)
-        await server.serve()
-
-
-    asyncio.run(main())
+    uvicorn.run("main:app", host="0.0.0.0", port=8000, reload=True)
