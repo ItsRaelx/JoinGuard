@@ -4,8 +4,10 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="5bebd994-283a-4072-abc1-0edd8c9f3077" name="Changes" comment="Project Setup">
-      <change beforePath="$PROJECT_DIR$/requirements.txt" beforeDir="false" afterPath="$PROJECT_DIR$/requirements.txt" afterDir="false" />
+    <list default="true" id="5bebd994-283a-4072-abc1-0edd8c9f3077" name="Changes" comment="update requirements.txt">
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/index.html" beforeDir="false" afterPath="$PROJECT_DIR$/index.html" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/routes/report.py" beforeDir="false" afterPath="$PROJECT_DIR$/routes/report.py" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -115,7 +117,7 @@
       <workItem from="1729628359601" duration="7227000" />
       <workItem from="1729674862603" duration="1323000" />
       <workItem from="1729676260993" duration="2418000" />
-      <workItem from="1729678692638" duration="1608000" />
+      <workItem from="1729678692638" duration="4347000" />
     </task>
     <task id="LOCAL-00001" summary="Project Setup">
       <option name="closed" value="true" />
@@ -133,7 +135,23 @@
       <option name="project" value="LOCAL" />
       <updated>1729680027016</updated>
     </task>
-    <option name="localTasksCounter" value="3" />
+    <task id="LOCAL-00003" summary="update requirements.txt">
+      <option name="closed" value="true" />
+      <created>1729680314514</created>
+      <option name="number" value="00003" />
+      <option name="presentableId" value="LOCAL-00003" />
+      <option name="project" value="LOCAL" />
+      <updated>1729680314514</updated>
+    </task>
+    <task id="LOCAL-00004" summary="update requirements.txt">
+      <option name="closed" value="true" />
+      <created>1729681637959</created>
+      <option name="number" value="00004" />
+      <option name="presentableId" value="LOCAL-00004" />
+      <option name="project" value="LOCAL" />
+      <updated>1729681637959</updated>
+    </task>
+    <option name="localTasksCounter" value="5" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -144,10 +162,11 @@
   </component>
   <component name="VcsManagerConfiguration">
     <MESSAGE value="Project Setup" />
-    <option name="LAST_COMMIT_MESSAGE" value="Project Setup" />
+    <MESSAGE value="update requirements.txt" />
+    <option name="LAST_COMMIT_MESSAGE" value="update requirements.txt" />
   </component>
   <component name="com.intellij.coverage.CoverageDataManagerImpl">
-    <SUITE FILE_PATH="coverage/JoinGuard$main.coverage" NAME="main Coverage Results" MODIFIED="1729679870405" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" />
+    <SUITE FILE_PATH="coverage/JoinGuard$main.coverage" NAME="main Coverage Results" MODIFIED="1729684874778" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" />
     <SUITE FILE_PATH="coverage/JoinGuard$list.coverage" NAME="list Coverage Results" MODIFIED="1729101485623" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/routes" />
   </component>
 </project>

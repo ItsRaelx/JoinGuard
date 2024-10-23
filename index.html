@@ -36,6 +36,8 @@
         .user-banner {
             height: 120px;
             background-color: #1b7d9b;
+            background-size: cover;
+            background-position: center;
         }
 
         .user-info {
@@ -159,7 +161,7 @@
             left: 0;
             right: 0;
             bottom: 0;
-            background-color: #000000; /* Changed to solid black */
+            background-color: #000000;
             z-index: 2;
             display: flex;
             justify-content: center;
@@ -191,6 +193,53 @@
         .hidden {
             display: none !important;
         }
+
+        #success-message {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.9);
+            display: none;
+            justify-content: center;
+            align-items: center;
+            z-index: 1000;
+        }
+
+        .success-content {
+            background-color: #36393f;
+            padding: 40px;
+            border-radius: 8px;
+            text-align: center;
+            max-width: 80%;
+        }
+
+        .success-content h2 {
+            color: #fff;
+            font-size: 24px;
+            margin-bottom: 20px;
+        }
+
+        .success-content p {
+            color: #dcddde;
+            font-size: 16px;
+            line-height: 1.5;
+            margin-bottom: 30px;
+        }
+
+        #error-message {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            background-color: #d83c3e;
+            color: white;
+            padding: 10px;
+            text-align: center;
+            z-index: 1000;
+        }
     </style>
 </head>
 <body>
@@ -202,7 +251,7 @@
         </div>
     </div>
 
-    <div class="container">
+    <div class="container" id="report-container">
         <div class="user-banner" id="user-banner"></div>
         <div class="user-info">
             <div class="profile-picture-container">
@@ -214,7 +263,7 @@
             </div>
         </div>
         <div class="report-section">
-            <form id="report-form" action="http://localhost:8000/report" method="POST">
+            <form id="report-form">
                 <input type="hidden" id="server-port" name="server-port">
                 <input type="hidden" id="server-ip" name="server-ip">
                 <input type="hidden" id="reported-ip" name="reported-ip">
@@ -236,8 +285,18 @@
         </div>
     </div>
 
+    <div id="success-message">
+        <div class="success-content">
+            <h2>Zgłoszenie wysłane</h2>
+            <p>Twoje zgłoszenie zostało pomyślnie wysłane i jest obecnie weryfikowane przez nasz zespół. Dziękujemy za Twoją czujność i pomoc w utrzymaniu bezpieczeństwa na serwerze.</p>
+        </div>
+    </div>
+
+    <div id="error-message">
+        <p id="error-text"></p>
+    </div>
+
     <script>
-        // Function to decode Base64 to JSON
         function decodeBase64ToJSON(base64) {
             try {
                 const jsonString = atob(base64);
@@ -248,7 +307,6 @@
             }
         }
 
-        // Function to get URL parameter
         function getUrlParameter(name) {
             name = name.replace(/[\[]/, '\\[').replace(/[\]]/, '\\]');
             var regex = new RegExp('[\\?&]' + name + '=([^&#]*)');
@@ -256,18 +314,25 @@
             return results === null ? '' : decodeURIComponent(results[1].replace(/\+/g, ' '));
         }
 
-        // Function to show error message
         function showError(message) {
-            document.getElementById('overlay-message').textContent = message;
-            document.querySelector('.spinner').classList.add('hidden');
+            const errorElement = document.getElementById('error-message');
+            const errorTextElement = document.getElementById('error-text');
+            errorTextElement.textContent = message;
+            errorElement.style.display = 'block';
+            setTimeout(() => {
+                errorElement.style.display = 'none';
+            }, 5000); // Hide the error message after 5 seconds
         }
 
-        // Function to hide overlay
         function hideOverlay() {
             document.getElementById('overlay').classList.add('hidden');
         }
 
-        // Get and decode the data
+        function showSuccessMessage() {
+            document.getElementById('success-message').style.display = 'flex';
+            document.getElementById('report-container').style.display = 'none';
+        }
+
         const encodedData = getUrlParameter('state');
         const authCode = getUrlParameter('auth');
 
@@ -277,7 +342,6 @@
             const decodedData = decodeBase64ToJSON(encodedData);
 
             if (decodedData) {
-                // Fill in the form fields
                 document.getElementById('server-port').value = decodedData.server.port;
                 document.getElementById('server-ip').value = decodedData.server.ip;
                 document.getElementById('reported-username').value = decodedData.reported.nick;
@@ -286,54 +350,105 @@
                 document.getElementById('reporting-nick').value = decodedData.reporting.nick;
                 document.getElementById('auth').value = authCode;
 
-                // Record the start time
                 const startTime = Date.now();
 
-                // Fetch user profile information from Discord API
                 fetch('https://discord.com/api/users/@me', {
                     headers: {
                         'Authorization': `Bearer ${authCode}`
                     }
                 })
-                        .then(response => {
-                            if (!response.ok) {
-                                throw new Error('Nie udało się pobrać danych użytkownika.');
-                            }
-                            return response.json();
-                        })
-                        .then(data => {
-                            document.getElementById('username').textContent = data.username;
-                            document.getElementById('user-id').textContent = data.id;
+                .then(response => {
+                    if (!response.ok) {
+                        throw new Error('Nie udało się pobrać danych użytkownika.');
+                    }
+                    return response.json();
+                })
+                .then(data => {
+                    document.getElementById('username').textContent = data.username;
+                    document.getElementById('user-id').textContent = data.id;
 
-                            // Set profile picture
-                            const avatarUrl = `https://cdn.discordapp.com/avatars/${data.id}/${data.avatar}.png`;
-                            document.getElementById('profile-picture').src = avatarUrl;
+                    const avatarUrl = `https://cdn.discordapp.com/avatars/${data.id}/${data.avatar}.png`;
+                    document.getElementById('profile-picture').src = avatarUrl;
 
-                            // Set banner color if available
-                            if (data.banner_color) {
-                                document.getElementById('user-banner').style.backgroundColor = data.banner_color;
-                            } else {
-                                // Default color if no banner color is set
-                                document.getElementById('user-banner').style.backgroundColor = '#1b7d9b';
-                            }
+                    const bannerElement = document.getElementById('user-banner');
+                    if (data.banner) {
+                        const bannerUrl = `https://cdn.discordapp.com/banners/${data.id}/${data.banner}.png?size=480`;
+                        bannerElement.style.backgroundImage = `url('${bannerUrl}')`;
+                    } else if (data.banner_color) {
+                        bannerElement.style.backgroundColor = data.banner_color;
+                    } else {
+                        bannerElement.style.backgroundColor = '#1b7d9b';
+                    }
 
-                            // Calculate how much time has passed
-                            const elapsedTime = Date.now() - startTime;
-                            const remainingTime = Math.max(0, 2000 - elapsedTime);
+                    const elapsedTime = Date.now() - startTime;
+                    const remainingTime = Math.max(0, 2000 - elapsedTime);
 
-                            // Wait for the remaining time before hiding the overlay
-                            setTimeout(() => {
-                                hideOverlay();
-                            }, remainingTime);
-                        })
-                        .catch(error => {
-                            console.error('Error fetching user info:', error);
-                            showError('Wystąpił błąd podczas ładowania danych. Spróbuj ponownie później.');
-                        });
+                    setTimeout(() => {
+                        hideOverlay();
+                    }, remainingTime);
+                })
+                .catch(error => {
+                    console.error('Error fetching user info:', error);
+                    showError('Wystąpił błąd podczas ładowania danych. Spróbuj ponownie później.');
+                });
             } else {
                 showError('Nie udało się odczytać danych zgłoszenia. Spróbuj ponownie.');
             }
         }
+
+        document.getElementById('report-form').addEventListener('submit', function (e) {
+            e.preventDefault();
+
+            const formData = new FormData(this);
+            const jsonData = {
+                server: {
+                    port: formData.get('server-port'),
+                    ip: formData.get('server-ip')
+                },
+                reported: {
+                    nick: formData.get('reported-username'),
+                    ip: formData.get('reported-ip'),
+                    uuid: formData.get('reported-uuid')
+                },
+                reporting: {
+                    nick: formData.get('reporting-nick')
+                },
+                auth: formData.get('auth'),
+                reason: formData.get('report-reason')
+            };
+
+            // Log the data being sent
+            console.log('Sending data:', jsonData);
+
+            fetch('../report', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Accept': 'application/json'
+                },
+                body: JSON.stringify(jsonData),
+                credentials: 'include'
+            })
+                    .then(response => {
+                        if (!response.ok) {
+                            return response.text().then(text => {
+                                throw new Error(`HTTP error! status: ${response.status}, message: ${text}`);
+                            });
+                        }
+                        return response.json();
+                    })
+                    .then(data => {
+                        if (data.status === 'ok') {
+                            showSuccessMessage();
+                        } else {
+                            showError('Wystąpił błąd podczas wysyłania zgłoszenia: ' + (data.message || 'Nieznany błąd'));
+                        }
+                    })
+                    .catch(error => {
+                        console.error('Error:', error);
+                        showError('Wystąpił błąd podczas wysyłania zgłoszenia: ' + error.message);
+                    });
+        });
     </script>
 </body>
 </html>
