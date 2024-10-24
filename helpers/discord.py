@@ -40,12 +40,12 @@ async def get_user_data(access_token: str):
             return await resp.json()
 
 
-async def send_webhook(embed: dict):
+async def send_webhook(embed: dict, webhook_url: str = DISCORD_WEBHOOK_URL):
     headers = {'Content-Type': 'application/json'}
     data = {"embeds": [embed]}
 
     async with aiohttp.ClientSession() as session:
-        async with session.post(DISCORD_WEBHOOK_URL, json=data, headers=headers) as resp:
+        async with session.post(webhook_url, json=data, headers=headers) as resp:
             if resp.status != 204:
                 return False
             return True

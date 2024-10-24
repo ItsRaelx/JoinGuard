@@ -27,4 +27,4 @@ async def callback(callback_data: CallbackModel = Depends()):
     if data is None:
         raise HTTPException(status_code=400, detail="Failed to get access token")
     access_token = data['access_token']
-    return RedirectResponse(url=f'/../report?auth={access_token}&state={callback_data.state}')
+    return RedirectResponse(url=f'/../form?auth={access_token}&state={callback_data.state}')

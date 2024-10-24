@@ -32,9 +32,9 @@ def read_status():
     return {"Status": "OK"}
 
 
-@app.get("/report")
+@app.get("/form")
 def read_index():
-    return FileResponse("pages/report.html")
+    return FileResponse("pages/form.html")
 
 
 @app.get("/")

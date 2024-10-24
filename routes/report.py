@@ -4,60 +4,17 @@ from typing import Dict, Any
 
 from fastapi import APIRouter, Request, HTTPException
 from fastapi.responses import JSONResponse
-from pydantic import BaseModel, Field, validator
 
 from helpers.database import upsert_user_data, is_spam_reporter, add_spam_reporter
 from helpers.discord import send_webhook, get_user_data
 from helpers.signing import generate_signed_url, verify_signed_url
+from helpers.models import ReportData
 
 report_router = APIRouter(prefix="/report", tags=["report"])
 
-class ServerData(BaseModel):
-    port: str = Field(..., pattern=r'^\d{1,5}$')
-    ip: str = Field(..., pattern=r'^(\d{1,3}\.){3}\d{1,3}$')
-
-class ReportedData(BaseModel):
-    nick: str = Field(..., pattern=r'^[a-zA-Z0-9_]{3,16}$')
-    ip: str = Field(..., pattern=r'^(\d{1,3}\.){3}\d{1,3}$')
-    uuid: str = Field(..., pattern=r'^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$')
-
-class ReportingData(BaseModel):
-    nick: str = Field(..., pattern=r'^[a-zA-Z0-9_]{3,16}$')
-
-class ReportData(BaseModel):
-    server: ServerData
-    reported: ReportedData
-    reporting: ReportingData
-    auth: str = Field(..., pattern=r'^[A-Za-z0-9-_]{30,}$')
-    reason: str = Field(..., max_length=1000)
-
-    @validator('reason')
-    def reason_not_empty(cls, v):
-        if not v.strip():
-            raise ValueError('Reason cannot be empty')
-        return v
-
-    def serialize(self) -> Dict[str, Any]:
-        return {
-            "server": {
-                "port": str(self.server.port),
-                "ip": str(self.server.ip)
-            },
-            "reported": {
-                "nick": str(self.reported.nick),
-                "ip": str(self.reported.ip),
-                "uuid": str(self.reported.uuid)
-            },
-            "reporting": {
-                "nick": str(self.reporting.nick)
-            },
-            "auth": str(self.auth),
-            "reason": str(self.reason)
-        }
-
 @report_router.post("/")
 async def report(report_data: ReportData):
-    serialized_data = report_data.serialize()
+    serialized_data = report_data.model_dump()  # Changed from serialize() to model_dump()
     user_data = await get_user_data(serialized_data["auth"])
     if user_data is None:
         raise HTTPException(status_code=401, detail="Invalid API key")
@@ -80,7 +37,7 @@ async def report(report_data: ReportData):
         spam_url = generate_signed_url("https://joinguard.raidvm.com/report/spam", spam_data)
 
         embed = {
-            "title": "Szczegóły zgłoszenia",
+            "title": "Szczegóły \"Report\"",
             "color": 5814783,
             "footer": {"text": "JoinGuard"},
             "author": {
