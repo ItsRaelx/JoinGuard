@@ -498,7 +498,7 @@
 
         console.log('Sending data:', jsonData);
 
-        fetch('https://joinguard.raidvm.com/report', {
+        fetch('/report', {  // Use a relative URL
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',
@@ -507,29 +507,29 @@
             body: JSON.stringify(jsonData),
             credentials: 'include'
         })
-                .then(response => {
-                    if (!response.ok) {
-                        return response.text().then(text => {
-                            throw new Error(`HTTP error! status: ${response.status}, message: ${text}`);
-                        });
-                    }
-                    return response.json();
-                })
-                .then(data => {
-                    if (data.status === 'ok') {
-                        showSuccessMessage();
-                    } else {
-                        showError('Wystąpił błąd podczas wysyłania zgłoszenia: ' + (data.message || 'Nieznany błąd'));
-                    }
-                })
-                .catch(error => {
-                    console.error('Error:', error);
-                    showError('Wystąpił błąd podczas wysyłania zgłoszenia: ' + error.message);
-                })
-                .finally(() => {
-                    submitButton.disabled = false;
-                    submitButton.textContent = 'Wyślij zgłoszenie';
+        .then(response => {
+            if (!response.ok) {
+                return response.text().then(text => {
+                    throw new Error(`HTTP error! status: ${response.status}, message: ${text}`);
                 });
+            }
+            return response.json();
+        })
+        .then(data => {
+            if (data.status === 'ok') {
+                showSuccessMessage();
+            } else {
+                showError('Wystąpił błąd podczas wysyłania zgłoszenia: ' + (data.message || 'Nieznany błąd'));
+            }
+        })
+        .catch(error => {
+            console.error('Error:', error);
+            showError('Wystąpił błąd podczas wysyłania zgłoszenia: ' + error.message);
+        })
+        .finally(() => {
+            submitButton.disabled = false;
+            submitButton.textContent = 'Wyślij zgłoszenie';
+        });
     });
 </script>
 </body>
