@@ -17,8 +17,8 @@ async def get_nicks() -> Optional[Dict[str, List[str]]]:
             {"$project": {"_id": 0, "nicknames": 1}}
         ]
         async for document in db.blacklist.aggregate(pipeline):
-            return {"names": document["nicknames"]}
-        return {"names": []}
+            return {"data": document["nicknames"]}
+        return {"data": []}
     except (ConnectionFailure, OperationFailure):
         return None
 
@@ -30,8 +30,8 @@ async def get_uuids() -> Optional[Dict[str, List[str]]]:
             {"$project": {"_id": 0, "uuids": 1}}
         ]
         async for document in db.blacklist.aggregate(pipeline):
-            return {"uuids": document["uuids"]}
-        return {"uuids": []}
+            return {"data": document["uuids"]}
+        return {"data": []}
     except (ConnectionFailure, OperationFailure):
         return None
 
@@ -44,8 +44,8 @@ async def get_ips() -> Optional[Dict[str, List[str]]]:
             {"$project": {"_id": 0, "ips": 1}}
         ]
         async for document in db.blacklist.aggregate(pipeline):
-            return {"ips": document["ips"]}
-        return {"ips": []}
+            return {"data": document["ips"]}
+        return {"data": []}
     except (ConnectionFailure, OperationFailure):
         return None
 
