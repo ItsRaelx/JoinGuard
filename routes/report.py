@@ -13,6 +13,7 @@ from helpers.models import ReportData
 report_router = APIRouter(prefix="/report", tags=["report"])
 
 @report_router.post("/")
+@report_router.post("")
 async def report(report_data: ReportData):
     serialized_data = report_data.model_dump()  # Changed from serialize() to model_dump()
     user_data = await get_user_data(serialized_data["auth"])
