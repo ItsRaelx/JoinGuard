@@ -18,7 +18,7 @@ if os.path.exists(env_path):
 app = FastAPI()
 
 # Mount static files
-app.mount("/static", StaticFiles(directory="public"), name="static")
+app.mount("/static", StaticFiles(directory="static"), name="static")
 
 # Include routers
 app.include_router(list_router)
@@ -26,14 +26,20 @@ app.include_router(login_router)
 app.include_router(api_router)
 app.include_router(report_router)
 
-@app.get("/")
-def read_root():
+
+@app.get("/status")
+def read_status():
     return {"Status": "OK"}
 
-@app.get("/main")
-def read_index():
-    return FileResponse("public/index.html")
 
+@app.get("/report")
+def read_index():
+    return FileResponse("pages/report.html")
+
+
+@app.get("/")
+def read_index():
+    return FileResponse("pages/index.html")
 
 if __name__ == "__main__":
     import uvicorn
