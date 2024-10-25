@@ -3,17 +3,9 @@ from fastapi.responses import RedirectResponse
 from pydantic import BaseModel, Field
 
 from helpers.discord import get_oauth_url, get_code
+from helpers.models import StateModel, CallbackModel
 
 login_router = APIRouter(prefix="/login", tags=["login"])
-
-
-class StateModel(BaseModel):
-    state: str = Field(..., max_length=1024, pattern=r'^[-A-Za-z0-9+/]*={0,3}$')
-
-
-class CallbackModel(BaseModel):
-    code: str = Field(..., pattern=r'^[A-Za-z0-9]{30}$')
-    state: str = Field(..., max_length=1024, pattern=r'^[-A-Za-z0-9+/]*={0,3}$')
 
 
 @login_router.get("/oauth2")

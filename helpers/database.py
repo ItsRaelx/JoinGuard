@@ -52,7 +52,7 @@ async def get_ips() -> Optional[Dict[str, List[str]]]:
 
 async def check_api_key(api_key: str) -> Optional[Dict[str, Any]]:
     try:
-        query = {"api": api_key}
+        query = {"api": api_key, "spam": False}
         document = await db.users.find_one(query)
         if document:
             # Convert the _id from NumberLong to string
@@ -113,6 +113,13 @@ async def add_spam_reporter(discord_id: str) -> Optional[Dict[str, str]]:
             {"$addToSet": {"reporters": discord_id}},
             upsert=True
         )
+
+        await db.users.update_one(
+            {"_id": discord_id},
+            {"$set": {"spam": True}},
+            upsert=True
+        )
+
         if result.modified_count > 0:
             return {"status": "updated", "message": f"Added Discord ID {discord_id} to spam reporters list."}
         elif result.upserted_id:
@@ -128,5 +135,35 @@ async def get_all_blacklisted_users() -> Optional[List[Dict[str, Any]]]:
     try:
         cursor = db.blacklist.find({})
         return await cursor.to_list(length=None)
+    except (ConnectionFailure, OperationFailure):
+        return None
+
+
+# add api key to discord user
+async def add_api_key(user_id: str, api_key: str) -> Optional[Dict[str, str]]:
+    try:
+        result = await db.users.update_one(
+            {"_id": user_id},
+            {
+                "$addToSet": {"api": api_key},
+                "$set": {"spam": False}
+            },
+            upsert=True
+        )
+        if result.matched_count:
+            return {"status": "updated", "message": f"Added API key {api_key} to user {user_id}."}
+        elif result.upserted_id:
+            return {"status": "inserted", "message": f"Inserted new API key {api_key} for user {user_id}."}
+        else:
+            return {"status": "no_change", "message": f"No update or insert was made for user {user_id}."}
+    except (ConnectionFailure, OperationFailure):
+        return None
+# get number of api keys for user
+async def get_api_key_count(user_id: str) -> Optional[int]:
+    try:
+        document = await db.users.find_one({"_id": user_id})
+        if document and 'api' in document:
+            return len(document['api'])
+        return 0
     except (ConnectionFailure, OperationFailure):
         return None

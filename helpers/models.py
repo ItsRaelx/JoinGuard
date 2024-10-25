@@ -53,3 +53,15 @@ class AltsReportModel(BaseModel):
     player: PlayerData
     server: ServerData
     alts: List[constr(min_length=3, max_length=16, pattern=r'^[a-zA-Z0-9_]+$')]
+
+class StateModel(BaseModel):
+    state: str = Field(..., max_length=1024, pattern=r'^[-A-Za-z0-9+/]*={0,3}$')
+
+
+class CallbackModel(BaseModel):
+    code: str = Field(..., pattern=r'^[A-Za-z0-9]{30}$')
+    state: str = Field(..., max_length=1024, pattern=r'^[-A-Za-z0-9+/]*={0,3}$')
+
+class APICallbackModel(BaseModel):
+    code: str = Field(..., pattern=r'^[A-Za-z0-9]{30}$')
+    state: str = Field(..., pattern=r'^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$')

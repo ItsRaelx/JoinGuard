@@ -1,17 +1,59 @@
 from datetime import datetime
 from os import getenv
 
-from fastapi import APIRouter, HTTPException
+from fastapi import APIRouter, HTTPException, Depends
 
-from helpers.database import check_api_key
-from helpers.discord import send_webhook
-from helpers.models import LoginAttemptModel, ApiResponse, AltsReportModel
+from helpers.database import check_api_key, add_api_key, get_api_key_count, is_spam_reporter
+from helpers.discord import send_webhook, get_code, get_user_data
+from helpers.models import LoginAttemptModel, ApiResponse, AltsReportModel, APICallbackModel
 from helpers.signing import generate_signed_url
 
 DISCORD_WEBHOOK_ATTEMPT_URL = getenv("DISCORD_WEBHOOK_ATTEMPT_URL")
 DISCORD_WEBHOOK_ALTS_URL = getenv("DISCORD_WEBHOOK_ALTS_URL")
+DISCORD_REDIRECT_URI_API = getenv("DISCORD_REDIRECT_URI_API")
 
 api_router = APIRouter(prefix="/api", tags=["api"])
+
+
+@api_router.get("/callback")
+async def callback(callback_data: APICallbackModel = Depends()):
+    data = await get_code(callback_data.code, redirect_uri=DISCORD_REDIRECT_URI_API)
+    if data is None:
+        raise HTTPException(status_code=400, detail="Failed to get access token")
+    access_token = data['access_token']
+
+    # get user id
+    user_data = await get_user_data(access_token)
+    if user_data is None:
+        raise HTTPException(status_code=400, detail="Failed to get user data")
+    user_id = user_data.get('id')
+
+    # check if user is in spam reporters list
+    is_spammer = await is_spam_reporter(user_id)
+    if is_spammer is None:
+        raise HTTPException(status_code=500, detail="Database error")
+    if is_spammer:
+        raise HTTPException(status_code=403, detail="User is marked as a spammer")
+
+    # get how many api keys the user has
+    api_key_count = await get_api_key_count(user_id)
+    if api_key_count is None:
+        raise HTTPException(status_code=500, detail="Database error")
+
+    # if user has less 10 api keys, add one
+    if api_key_count <= 10:
+        result = await add_api_key(user_id, callback_data.state)
+        if result is None:
+            raise HTTPException(status_code=500, detail="Database error")
+    else:
+        raise HTTPException(status_code=403, detail="User has reached the maximum number of API keys")
+
+    # add api key to user
+    result = await add_api_key(user_id, callback_data.state)
+    if result is None:
+        raise HTTPException(status_code=500, detail="Database error")
+    return ApiResponse(status="ok", message="API key added")
+
 
 
 @api_router.get("/check", response_model=ApiResponse)
@@ -93,3 +135,4 @@ async def report_alts(report: AltsReportModel):
 
     await send_webhook(embed, webhook_url=DISCORD_WEBHOOK_ALTS_URL)
     return ApiResponse(status="ok", message="Alts report received")
+
