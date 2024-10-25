@@ -110,6 +110,9 @@ async def report_alts(report: AltsReportModel):
     if not result:
         raise HTTPException(status_code=401, detail="Invalid API key")
 
+    if not DISCORD_WEBHOOK_ALTS_URL:
+        raise HTTPException(status_code=500, detail="Webhook URL is not configured")
+
     blacklist_data = {
         "nick": report.player.nick,
         "ip": report.player.ip,
@@ -124,7 +127,7 @@ async def report_alts(report: AltsReportModel):
 
     embed = {
         "title": "Alts Report",
-        "color": 15105570,  # A different color to distinguish from login attempts
+        "color": 15105570,
         "footer": {"text": "JoinGuard"},
         "timestamp": datetime.now().isoformat(),
         "thumbnail": {"url": f"https://mc-heads.net/avatar/{report.player.uuid}"},
@@ -141,4 +144,3 @@ async def report_alts(report: AltsReportModel):
 
     await send_webhook(embed, webhook_url=DISCORD_WEBHOOK_ALTS_URL)
     return ApiResponse(status="ok", message="Alts report received")
-

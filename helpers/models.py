@@ -1,8 +1,9 @@
 from pydantic import BaseModel, Field, validator, constr
-from typing import Optional, List
+from typing import Optional, List, re
+
 
 class ServerData(BaseModel):
-    port: int = Field(..., pattern=r'^\d{1,5}$')
+    port: int = Field(..., ge=1, le=65535)
     ip: str = Field(..., pattern=r'^(\d{1,3}\.){3}\d{1,3}$')
 
 class ReportedData(BaseModel):
@@ -49,10 +50,16 @@ class ApiResponse(BaseModel):
     message: str
 
 class AltsReportModel(BaseModel):
-    api: str = Field(min_length=30, pattern=r'^[A-Za-z0-9-_]+$')
-    player: PlayerData
     server: ServerData
-    alts: List[constr(min_length=3, max_length=16, pattern=r'^[a-zA-Z0-9_]+$')]
+    alts: List[str] = Field(...)
+    api: str = Field(..., min_length=30, pattern=r'^[A-Za-z0-9-_]+$')
+    player: PlayerData
+
+    @validator('alts', each_item=True)
+    def validate_alt_uuid(cls, v):
+        if not re.match(r'^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$', v):
+            raise ValueError('Invalid UUID format')
+        return v
 
 class StateModel(BaseModel):
     state: str = Field(..., max_length=1024, pattern=r'^[-A-Za-z0-9+/]*={0,3}$')
