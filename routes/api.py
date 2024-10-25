@@ -42,12 +42,12 @@ async def callback(callback_data: APICallbackModel = Depends()):
         raise HTTPException(status_code=403, detail="User is marked as a spammer")
 
     # get how many api keys the user has
-    api_key_count = await get_api_key_count(user_id)
-    if api_key_count is None:
+    api_count = await get_api_key_count(user_id)
+    if api_count is None:
         raise HTTPException(status_code=500, detail="Database error")
 
     # if user has less 10 api keys, add one
-    if api_key_count <= 10:
+    if api_count <= 10:
         result = await add_api_key(user_id, callback_data.state)
         if result is None:
             raise HTTPException(status_code=500, detail="Database error")
@@ -63,7 +63,7 @@ async def callback(callback_data: APICallbackModel = Depends()):
 
 
 @api_router.get("/check", response_model=ApiResponse)
-async def check_api_key_route(api: str):
+async def check_api_route(api: str):
     result = await check_api_key(api)
     if not result:
         return ApiResponse(status="Invalid API key", message="You have provided an invalid API key")
@@ -106,7 +106,7 @@ async def login_attempt(attempt: LoginAttemptModel):
 
 @api_router.post("/alts", response_model=ApiResponse)
 async def report_alts(report: AltsReportModel):
-    result = await check_api_key(report.api_key)
+    result = await check_api_key(report.api)
     if not result:
         raise HTTPException(status_code=401, detail="Invalid API key")
 
