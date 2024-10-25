@@ -66,7 +66,7 @@ async def callback(callback_data: APICallbackModel = Depends()):
 async def check_api_key_route(api: str):
     result = await check_api_key(api)
     if not result:
-        return ApiResponse(status="Invalid API key")
+        return ApiResponse(status="Invalid API key", message="You have provided an invalid API key")
     return ApiResponse(status="ok", message="Valid API key")
 
 @api_router.post("/attempt", response_model=ApiResponse)
