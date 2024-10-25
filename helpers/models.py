@@ -2,7 +2,7 @@ from pydantic import BaseModel, Field, validator, constr
 from typing import Optional, List
 
 class ServerData(BaseModel):
-    port: str = Field(..., pattern=r'^\d{1,5}$')
+    port: int = Field(..., pattern=r'^\d{1,5}$')
     ip: str = Field(..., pattern=r'^(\d{1,3}\.){3}\d{1,3}$')
 
 class ReportedData(BaseModel):
