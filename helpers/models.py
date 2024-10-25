@@ -37,7 +37,7 @@ class LoginAttemptModel(BaseModel):
     server: ServerData
 
 class ApiKeySpamModel(BaseModel):
-    api_key: str = Field(..., pattern=r'^[A-Za-z0-9-_]{30,}$')
+    api: str = Field(..., pattern=r'^[A-Za-z0-9-_]{30,}$')
 
 class BlacklistAddModel(BaseModel):
     nick: str = Field(..., pattern=r'^[a-zA-Z0-9_]{3,16}$')
@@ -49,7 +49,7 @@ class ApiResponse(BaseModel):
     message: str
 
 class AltsReportModel(BaseModel):
-    api_key: str = Field(min_length=30, pattern=r'^[A-Za-z0-9-_]+$')
+    api: str = Field(min_length=30, pattern=r'^[A-Za-z0-9-_]+$')
     player: PlayerData
     server: ServerData
     alts: List[constr(min_length=3, max_length=16, pattern=r'^[a-zA-Z0-9_]+$')]
