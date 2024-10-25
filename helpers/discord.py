@@ -11,8 +11,8 @@ DISCORD_CLIENT_SECRET = os.getenv("DISCORD_CLIENT_SECRET")
 DISCORD_REDIRECT_URI = os.getenv("DISCORD_REDIRECT_URI")
 DISCORD_WEBHOOK_URL = os.getenv("DISCORD_WEBHOOK_URL")
 
-def get_oauth_url(state: str):
-    return f"https://discord.com/api/oauth2/authorize?client_id={DISCORD_CLIENT_ID}&redirect_uri={DISCORD_REDIRECT_URI}&response_type=code&scope=identify&state={state}"
+def get_oauth_url(state: str, redirect_uri: str = DISCORD_REDIRECT_URI):
+    return f"https://discord.com/api/oauth2/authorize?client_id={DISCORD_CLIENT_ID}&redirect_uri={redirect_uri}&response_type=code&scope=identify&state={state}"
 
 async def get_code(code: str, redirect_uri: str = DISCORD_REDIRECT_URI):
     data = {

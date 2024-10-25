@@ -2,10 +2,11 @@ from datetime import datetime
 from os import getenv
 
 from fastapi import APIRouter, HTTPException, Depends
+from starlette.responses import HTMLResponse, RedirectResponse
 
 from helpers.database import check_api_key, add_api_key, get_api_key_count, is_spam_reporter
-from helpers.discord import send_webhook, get_code, get_user_data
-from helpers.models import LoginAttemptModel, ApiResponse, AltsReportModel, APICallbackModel
+from helpers.discord import send_webhook, get_code, get_user_data, get_oauth_url
+from helpers.models import LoginAttemptModel, ApiResponse, AltsReportModel, APICallbackModel, StateModel
 from helpers.signing import generate_signed_url
 
 DISCORD_WEBHOOK_ATTEMPT_URL = getenv("DISCORD_WEBHOOK_ATTEMPT_URL")
@@ -13,6 +14,11 @@ DISCORD_WEBHOOK_ALTS_URL = getenv("DISCORD_WEBHOOK_ALTS_URL")
 DISCORD_REDIRECT_URI_API = getenv("DISCORD_REDIRECT_URI_API")
 
 api_router = APIRouter(prefix="/api", tags=["api"])
+
+
+@api_router.get("/register", response_class=HTMLResponse)
+async def login(state_data: StateModel = Depends()):
+    return RedirectResponse(url=get_oauth_url(state_data.state, redirect_uri=DISCORD_REDIRECT_URI_API))
 
 
 @api_router.get("/callback")
