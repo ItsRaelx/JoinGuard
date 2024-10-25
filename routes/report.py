@@ -1,18 +1,16 @@
 import re
 from datetime import datetime
-from typing import Dict, Any
 
 from fastapi import APIRouter, Request, HTTPException
 from fastapi.responses import JSONResponse
 
 from helpers.database import upsert_user_data, is_spam_reporter, add_spam_reporter
 from helpers.discord import send_webhook, get_user_data
-from helpers.signing import generate_signed_url, verify_signed_url
 from helpers.models import ReportData
+from helpers.signing import generate_signed_url, verify_signed_url
 
 report_router = APIRouter(prefix="/report", tags=["report"])
 
-@report_router.post("/")
 @report_router.post("")
 async def report(report_data: ReportData):
     serialized_data = report_data.model_dump()  # Changed from serialize() to model_dump()
@@ -54,8 +52,9 @@ async def report(report_data: ReportData):
                 {"name": "Server", "value": f"{serialized_data['server']['ip']}:{serialized_data['server']['port']}",
                  "inline": True},
                 {"name": "UUID", "value": serialized_data["reported"]["uuid"], "inline": True},
-                {"name": "Powód", "value": serialized_data["reason"], "inline": False},
-                {"name": "Blacklista", "value": f"[Dodaj]({blacklist_url}) | [Spam]({spam_url})", "inline": False},
+                {"name": "Reason", "value": serialized_data["reason"], "inline": False},
+                {"name": "Actions", "value": f"[Add to Blacklist]({blacklist_url}) | [Mark as Spam]({spam_url})",
+                 "inline": False},
             ]
         }
 

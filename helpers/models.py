@@ -1,4 +1,4 @@
-from pydantic import BaseModel, Field, validator
+from pydantic import BaseModel, Field, validator, constr
 from typing import Optional, List
 
 class ServerData(BaseModel):
@@ -22,7 +22,6 @@ class ReportData(BaseModel):
 
 class LoginModel(BaseModel):
     _id: str
-    spam: bool
 
 class LoginResponse(BaseModel):
     data: Optional[LoginModel] = None
@@ -48,3 +47,9 @@ class BlacklistAddModel(BaseModel):
 class ApiResponse(BaseModel):
     status: str
     message: str
+
+class AltsReportModel(BaseModel):
+    api_key: str = Field(min_length=30, pattern=r'^[A-Za-z0-9-_]+$')
+    player: PlayerData
+    server: ServerData
+    alts: List[constr(min_length=3, max_length=16, pattern=r'^[a-zA-Z0-9_]+$')]

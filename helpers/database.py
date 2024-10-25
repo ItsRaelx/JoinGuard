@@ -52,7 +52,7 @@ async def get_ips() -> Optional[Dict[str, List[str]]]:
 
 async def check_api_key(api_key: str) -> Optional[Dict[str, Any]]:
     try:
-        query = {"api": api_key, "spam": False}
+        query = {"api": api_key}
         document = await db.users.find_one(query)
         if document:
             # Convert the _id from NumberLong to string
@@ -64,19 +64,6 @@ async def check_api_key(api_key: str) -> Optional[Dict[str, Any]]:
 
             return document
         return None
-    except (ConnectionFailure, OperationFailure):
-        return None
-
-async def mark_api_key_as_spam(api_key: str) -> Optional[Dict[str, str]]:
-    try:
-        result = await db.users.update_one(
-            {"api": api_key},
-            {"$set": {"spam": True}}
-        )
-        if result.modified_count > 0:
-            return {"status": "updated", "message": f"Marked API key {api_key} as spam."}
-        else:
-            return {"status": "no_change", "message": f"API key {api_key} not found or already marked as spam."}
     except (ConnectionFailure, OperationFailure):
         return None
 
