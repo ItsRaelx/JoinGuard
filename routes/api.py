@@ -71,7 +71,7 @@ async def check_api_key_route(api_key: str):
 
 @api_router.post("/attempt", response_model=ApiResponse)
 async def login_attempt(attempt: LoginAttemptModel):
-    result = await check_api_key(attempt.api_key)
+    result = await check_api_key(attempt.api)
     if not result:
         raise HTTPException(status_code=401, detail="Invalid API key")
 

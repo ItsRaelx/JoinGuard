@@ -32,7 +32,7 @@ class PlayerData(BaseModel):
     ip: str = Field(..., pattern=r'^(\d{1,3}\.){3}\d{1,3}$')
 
 class LoginAttemptModel(BaseModel):
-    api_key: str
+    api: str
     player: PlayerData
     server: ServerData
 
