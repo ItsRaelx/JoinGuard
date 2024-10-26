@@ -13,10 +13,8 @@ async def hash_data_with_salt(input_data):
     output_data = []
 
     for string in input_data:
-        salt = os.urandom(16)
         hash_object = hashlib.sha512()
         hash_object.update(str(string).encode('utf-8'))
-        hash_object.update(salt)
         hashed_value = hash_object.hexdigest()
-        output_data.append(f"{salt.hex()}.{hashed_value}")
+        output_data.append(hashed_value)
     return output_data
