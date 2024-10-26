@@ -50,7 +50,7 @@ async def callback(callback_data: APICallbackModel = Depends()):
     if api_count <= 10:
         result = await add_api_key(user_id, callback_data.state)
         if result is None:
-            raise HTTPException(status_code=500, detail="Database error")
+            raise HTTPException(status_coformde=500, detail="Database error")
     else:
         raise HTTPException(status_code=403, detail="User has reached the maximum number of API keys")
 
@@ -58,7 +58,7 @@ async def callback(callback_data: APICallbackModel = Depends()):
     result = await add_api_key(user_id, callback_data.state)
     if result is None:
         raise HTTPException(status_code=500, detail="Database error")
-    return ApiResponse(status="ok", message="API key added")
+    return RedirectResponse(url=f'/../pages/apiadded')
 
 
 

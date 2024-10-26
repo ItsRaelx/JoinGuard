@@ -4,7 +4,9 @@ from fastapi import FastAPI
 from fastapi.responses import FileResponse
 from fastapi.staticfiles import StaticFiles
 from fastapi.middleware.cors import CORSMiddleware
+from starlette.middleware.base import BaseHTTPMiddleware
 from starlette.middleware.trustedhost import TrustedHostMiddleware
+from starlette.requests import Request
 
 from routes.api import api_router
 from routes.list import list_router
@@ -43,6 +45,22 @@ app.add_middleware(TrustedHostMiddleware, allowed_hosts=ALLOWED_HOSTS)
 
 # Mount static files
 app.mount("/static", StaticFiles(directory="static"), name="static")
+
+# Mount pages
+app.mount("/pages", StaticFiles(directory="pages"), name="pages")
+
+# Custom middleware to serve HTML files from /pages
+class HTMLPageMiddleware(BaseHTTPMiddleware):
+    async def dispatch(self, request: Request, call_next):
+        path = request.url.path
+        if path.startswith("/pages/"):
+            page_name = path.split("/")[-1]
+            file_path = f"pages/{page_name}.html"
+            if os.path.exists(file_path):
+                return FileResponse(file_path)
+        return await call_next(request)
+
+app.add_middleware(HTMLPageMiddleware)
 
 # Include routers
 app.include_router(list_router)

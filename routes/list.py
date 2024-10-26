@@ -2,6 +2,7 @@ from fastapi import APIRouter, HTTPException
 from pydantic import BaseModel
 
 from helpers.database import get_uuids, get_nicks, get_ips
+from helpers.hashing import hash_data_with_salt
 
 list_router = APIRouter(prefix="/list", tags=["list"])
 
@@ -31,4 +32,5 @@ async def read_ips():
     result = await get_ips()
     if result is None:
         raise HTTPException(status_code=500, detail="Database error")
-    return result
+    hashed_result = await hash_data_with_salt(result['data'] if isinstance(result, dict) and 'data' in result else result)
+    return {"data": hashed_result}

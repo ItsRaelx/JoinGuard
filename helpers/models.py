@@ -20,7 +20,7 @@ class ReportData(BaseModel):
     reported: ReportedData
     reporting: ReportingData
     auth: str = Field(..., pattern=r'^[A-Za-z0-9-_]{30,}$')
-    reason: str = Field(..., max_length=1000)
+    reason: str = Field(..., pattern=r'^[a-zA-Z0-9_ ]{3,1000}$')
 
 class LoginModel(BaseModel):
     _id: str
@@ -34,7 +34,7 @@ class PlayerData(BaseModel):
     ip: str = Field(..., pattern=r'^(\d{1,3}\.){3}\d{1,3}$')
 
 class LoginAttemptModel(BaseModel):
-    api: str
+    api: str = Field(..., pattern=r'^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$')
     player: PlayerData
     server: ServerData
 

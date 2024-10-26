@@ -87,14 +87,6 @@
             background-color: #2f3136;
         }
 
-        .primary-header {
-            color: #fff;
-            font-size: 16px;
-            font-weight: 600;
-            margin-bottom: 15px;
-            text-transform: uppercase;
-        }
-
         .form-group {
             margin-bottom: 15px;
         }
@@ -188,50 +180,12 @@
         }
 
         @keyframes spin {
-            0% {
-                transform: rotate(0deg);
-            }
-            100% {
-                transform: rotate(360deg);
-            }
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
         }
 
         .hidden {
             display: none !important;
-        }
-
-        #success-message {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background-color: rgba(0, 0, 0, 0.9);
-            display: none;
-            justify-content: center;
-            align-items: center;
-            z-index: 1000;
-        }
-
-        .success-content {
-            background-color: #36393f;
-            padding: 40px;
-            border-radius: 8px;
-            text-align: center;
-            max-width: 80%;
-        }
-
-        .success-content h2 {
-            color: #fff;
-            font-size: 24px;
-            margin-bottom: 20px;
-        }
-
-        .success-content p {
-            color: #dcddde;
-            font-size: 16px;
-            line-height: 1.5;
-            margin-bottom: 30px;
         }
 
         #error-message {
@@ -248,12 +202,8 @@
         }
 
         @keyframes fadeIn {
-            from {
-                opacity: 0;
-            }
-            to {
-                opacity: 1;
-            }
+            from { opacity: 0; }
+            to { opacity: 1; }
         }
 
         @keyframes slideIn {
@@ -274,263 +224,222 @@
         .slide-in {
             animation: slideIn 0.5s ease-out;
         }
-
-        #confetti-canvas {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            pointer-events: none;
-            z-index: 1001;
-        }
     </style>
-    <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.5.1/dist/confetti.browser.min.js"></script>
 </head>
 <body>
-<div id="overlay">
-    <div class="overlay-content">
-        <h2>Ładowanie zgłoszenia...</h2>
-        <div class="spinner"></div>
-        <p id="overlay-message">Proszę czekać, trwa ładowanie danych.</p>
-    </div>
-</div>
-
-<div class="container" id="report-container">
-    <div class="user-banner" id="user-banner"></div>
-    <div class="user-info">
-        <div class="profile-picture-container">
-            <img id="profile-picture" alt="Profile Picture" class="profile-picture">
-        </div>
-        <div class="user-details">
-            <div class="username">Witaj, <span id="username"></span></div>
-            <div class="user-id">ID: <span id="user-id"></span></div>
+    <div id="overlay">
+        <div class="overlay-content">
+            <h2>Ładowanie zgłoszenia...</h2>
+            <div class="spinner"></div>
+            <p id="overlay-message">Proszę czekać, trwa ładowanie danych.</p>
         </div>
     </div>
-    <div class="report-section">
-        <form id="report-form">
-            <input type="hidden" id="server-port" name="server-port">
-            <input type="hidden" id="server-ip" name="server-ip">
-            <input type="hidden" id="reported-ip" name="reported-ip">
-            <input type="hidden" id="reported-uuid" name="reported-uuid">
-            <input type="hidden" id="reporting-nick" name="reporting-nick">
-            <input type="hidden" id="auth" name="auth">
 
-            <div class="form-group">
-                <label for="reported-username" class="form-label">Nick zgłaszanego gracza:</label>
-                <input type="text" id="reported-username" name="reported-username" class="input-style" readonly>
+    <div class="container" id="report-container">
+        <div class="user-banner" id="user-banner"></div>
+        <div class="user-info">
+            <div class="profile-picture-container">
+                <img id="profile-picture" alt="Profile Picture" class="profile-picture">
             </div>
-            <div class="form-group">
-                <label for="report-reason" class="form-label">Powód zgłoszenia:</label>
-                <textarea name="report-reason" class="form-style" id="report-reason" rows="5"
-                          placeholder="Powód zgłoszenia gracza..." required></textarea>
+            <div class="user-details">
+                <div class="username">Witaj, <span id="username"></span></div>
+                <div class="user-id">ID: <span id="user-id"></span></div>
             </div>
-            <button type="submit" class="btn">Wyślij zgłoszenie</button>
-        </form>
+        </div>
+        <div class="report-section">
+            <form id="report-form">
+                <input type="hidden" id="server-port" name="server-port">
+                <input type="hidden" id="server-ip" name="server-ip">
+                <input type="hidden" id="reported-ip" name="reported-ip">
+                <input type="hidden" id="reported-uuid" name="reported-uuid">
+                <input type="hidden" id="reporting-nick" name="reporting-nick">
+                <input type="hidden" id="auth" name="auth">
+
+                <div class="form-group">
+                    <label for="reported-username" class="form-label">Nick zgłaszanego gracza:</label>
+                    <input type="text" id="reported-username" name="reported-username" class="input-style" readonly>
+                </div>
+                <div class="form-group">
+                    <label for="report-reason" class="form-label">Powód zgłoszenia:</label>
+                    <textarea name="report-reason" class="form-style" id="report-reason" rows="5" placeholder="Powód zgłoszenia gracza..." required></textarea>
+                </div>
+                <button type="submit" class="btn">Wyślij zgłoszenie</button>
+            </form>
+        </div>
     </div>
-</div>
 
-<div id="success-message">
-    <div class="success-content">
-        <h2>Zgłoszenie wysłane</h2>
-        <p>Twoje zgłoszenie zostało pomyślnie wysłane i jest obecnie weryfikowane przez nasz zespół. Dziękujemy za Twoją
-            czujność i pomoc w utrzymaniu bezpieczeństwa na serwerze.</p>
+    <div id="error-message">
+        <p id="error-text"></p>
     </div>
-</div>
 
-<div id="error-message">
-    <p id="error-text"></p>
-</div>
-
-<canvas id="confetti-canvas"></canvas>
-
-<script>
-    function decodeBase64ToJSON(base64) {
-        try {
-            const jsonString = atob(base64);
-            return JSON.parse(jsonString);
-        } catch (error) {
-            console.error('Error decoding base64 or parsing JSON:', error);
-            return null;
+    <script>
+        function decodeBase64ToJSON(base64) {
+            try {
+                const jsonString = atob(base64);
+                return JSON.parse(jsonString);
+            } catch (error) {
+                console.error('Error decoding base64 or parsing JSON:', error);
+                return null;
+            }
         }
-    }
 
-    function getUrlParameter(name) {
-        name = name.replace(/[\[]/, '\\[').replace(/[\]]/, '\\]');
-        var regex = new RegExp('[\\?&]' + name + '=([^&#]*)');
-        var results = regex.exec(location.search);
-        return results === null ? '' : decodeURIComponent(results[1].replace(/\+/g, ' '));
-    }
+        function getUrlParameter(name) {
+            name = name.replace(/[\[]/, '\\[').replace(/[\]]/, '\\]');
+            var regex = new RegExp('[\\?&]' + name + '=([^&#]*)');
+            var results = regex.exec(location.search);
+            return results === null ? '' : decodeURIComponent(results[1].replace(/\+/g, ' '));
+        }
 
-    function showError(message) {
-        const errorElement = document.getElementById('error-message');
-        const errorTextElement = document.getElementById('error-text');
-        errorTextElement.textContent = message;
-        errorElement.style.display = 'block';
-        setTimeout(() => {
-            errorElement.style.display = 'none';
-        }, 5000); // Hide the error message after 5 seconds
-    }
+        function showError(message) {
+            const errorElement = document.getElementById('error-message');
+            const errorTextElement = document.getElementById('error-text');
+            errorTextElement.textContent = message;
+            errorElement.style.display = 'block';
+            setTimeout(() => {
+                errorElement.style.display = 'none';
+            }, 5000);
+        }
 
-    function hideOverlay() {
-        document.getElementById('overlay').classList.add('hidden');
-    }
+        function hideOverlay() {
+            document.getElementById('overlay').classList.add('hidden');
+        }
 
-    function showSuccessMessage() {
-        document.getElementById('success-message').style.display = 'flex';
-        document.getElementById('report-container').style.display = 'none';
+        function animateElement(element, className) {
+            element.classList.add(className);
+            element.addEventListener('animationend', () => {
+                element.classList.remove(className);
+            }, {once: true});
+        }
 
-        // Trigger confetti
-        const canvas = document.getElementById('confetti-canvas');
-        const myConfetti = confetti.create(canvas, {
-            resize: true,
-            useWorker: true
-        });
-        myConfetti({
-            particleCount: 100,
-            spread: 160,
-            origin: {y: 0.6}
-        });
-    }
+        const encodedData = getUrlParameter('state');
+        const authCode = getUrlParameter('auth');
 
-    function animateElement(element, className) {
-        element.classList.add(className);
-        element.addEventListener('animationend', () => {
-            element.classList.remove(className);
-        }, {once: true});
-    }
-
-    const encodedData = getUrlParameter('state');
-    const authCode = getUrlParameter('auth');
-
-    if (!encodedData || !authCode) {
-        showError('Nieprawidłowy lub wygasły link. Spróbuj ponownie.');
-    } else {
-        const decodedData = decodeBase64ToJSON(encodedData);
-
-        if (decodedData) {
-            document.getElementById('server-port').value = decodedData.server.port;
-            document.getElementById('server-ip').value = decodedData.server.ip;
-            document.getElementById('reported-username').value = decodedData.reported.nick;
-            document.getElementById('reported-ip').value = decodedData.reported.ip;
-            document.getElementById('reported-uuid').value = decodedData.reported.uuid;
-            document.getElementById('reporting-nick').value = decodedData.reporting.nick;
-            document.getElementById('auth').value = authCode;
-
-            const startTime = Date.now();
-
-            fetch('https://discord.com/api/users/@me', {
-                headers: {
-                    'Authorization': `Bearer ${authCode}`
-                }
-            })
-                    .then(response => {
-                        if (!response.ok) {
-                            throw new Error('Nie udało się pobrać danych użytkownika.');
-                        }
-                        return response.json();
-                    })
-                    .then(data => {
-                        document.getElementById('username').textContent = data.username;
-                        animateElement(document.querySelector('.username'), 'slide-in');
-
-                        document.getElementById('user-id').textContent = data.id;
-                        animateElement(document.querySelector('.user-id'), 'slide-in');
-
-                        const avatarUrl = `https://cdn.discordapp.com/avatars/${data.id}/${data.avatar}.png`;
-                        const profilePicture = document.getElementById('profile-picture');
-                        profilePicture.src = avatarUrl;
-                        animateElement(profilePicture, 'fade-in');
-
-                        const bannerElement = document.getElementById('user-banner');
-                        if (data.banner) {
-                            const bannerFormat = data.banner.startsWith('a_') ? 'gif' : 'png';
-                            const bannerUrl = `https://cdn.discordapp.com/banners/${data.id}/${data.banner}.${bannerFormat}?size=480`;
-                            bannerElement.style.backgroundImage = `url('${bannerUrl}')`;
-                        } else if (data.banner_color) {
-                            bannerElement.style.backgroundColor = data.banner_color;
-                        } else {
-                            bannerElement.style.backgroundColor = '#1b7d9b';
-                        }
-                        animateElement(bannerElement, 'fade-in');
-
-                        const elapsedTime = Date.now() - startTime;
-                        const remainingTime = Math.max(0, 2000 - elapsedTime);
-
-                        setTimeout(() => {
-                            hideOverlay();
-                            animateElement(document.querySelector('.container'), 'fade-in');
-                        }, remainingTime);
-                    })
-                    .catch(error => {
-                        console.error('Error fetching user info:', error);
-                        showError('Wystąpił błąd podczas ładowania danych. Spróbuj ponownie później.');
-                    });
+        if (!encodedData || !authCode) {
+            showError('Nieprawidłowy lub wygasły link. Spróbuj ponownie.');
         } else {
-            showError('Nie udało się odczytać danych zgłoszenia. Spróbuj ponownie.');
-        }
-    }
+            const decodedData = decodeBase64ToJSON(encodedData);
 
-    document.getElementById('report-form').addEventListener('submit', function (e) {
-        e.preventDefault();
+            if (decodedData) {
+                document.getElementById('server-port').value = decodedData.server.port;
+                document.getElementById('server-ip').value = decodedData.server.ip;
+                document.getElementById('reported-username').value = decodedData.reported.nick;
+                document.getElementById('reported-ip').value = decodedData.reported.ip;
+                document.getElementById('reported-uuid').value = decodedData.reported.uuid;
+                document.getElementById('reporting-nick').value = decodedData.reporting.nick;
+                document.getElementById('auth').value = authCode;
 
-        const submitButton = this.querySelector('button[type="submit"]');
-        submitButton.disabled = true;
-        submitButton.textContent = 'Wysyłanie...';
+                const startTime = Date.now();
 
-        const formData = new FormData(this);
-        const jsonData = {
-            server: {
-                port: formData.get('server-port'),
-                ip: formData.get('server-ip')
-            },
-            reported: {
-                nick: formData.get('reported-username'),
-                ip: formData.get('reported-ip'),
-                uuid: formData.get('reported-uuid')
-            },
-            reporting: {
-                nick: formData.get('reporting-nick')
-            },
-            auth: formData.get('auth'),
-            reason: formData.get('report-reason')
-        };
-
-        console.log('Sending data:', jsonData);
-
-        fetch('../report', {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json',
-                'Accept': 'application/json'
-            },
-            body: JSON.stringify(jsonData),
-            credentials: 'include'
-        })
+                fetch('https://discord.com/api/users/@me', {
+                    headers: {
+                        'Authorization': `Bearer ${authCode}`
+                    }
+                })
                 .then(response => {
                     if (!response.ok) {
-                        return response.text().then(text => {
-                            throw new Error(`HTTP error! status: ${response.status}, message: ${text}`);
-                        });
+                        throw new Error('Nie udało się pobrać danych użytkownika.');
                     }
                     return response.json();
                 })
                 .then(data => {
-                    if (data.status === 'ok') {
-                        showSuccessMessage();
+                    document.getElementById('username').textContent = data.username;
+                    animateElement(document.querySelector('.username'), 'slide-in');
+
+                    document.getElementById('user-id').textContent = data.id;
+                    animateElement(document.querySelector('.user-id'), 'slide-in');
+
+                    const avatarUrl = `https://cdn.discordapp.com/avatars/${data.id}/${data.avatar}.png`;
+                    const profilePicture = document.getElementById('profile-picture');
+                    profilePicture.src = avatarUrl;
+                    animateElement(profilePicture, 'fade-in');
+
+                    const bannerElement = document.getElementById('user-banner');
+                    if (data.banner) {
+                        const bannerFormat = data.banner.startsWith('a_') ? 'gif' : 'png';
+                        const bannerUrl = `https://cdn.discordapp.com/banners/${data.id}/${data.banner}.${bannerFormat}?size=480`;
+                        bannerElement.style.backgroundImage = `url('${bannerUrl}')`;
+                    } else if (data.banner_color) {
+                        bannerElement.style.backgroundColor = data.banner_color;
                     } else {
-                        showError('Wystąpił błąd podczas wysyłania zgłoszenia: ' + (data.message || 'Nieznany błąd'));
+                        bannerElement.style.backgroundColor = '#1b7d9b';
                     }
+                    animateElement(bannerElement, 'fade-in');
+
+                    const elapsedTime = Date.now() - startTime;
+                    const remainingTime = Math.max(0, 2000 - elapsedTime);
+
+                    setTimeout(() => {
+                        hideOverlay();
+                        animateElement(document.querySelector('.container'), 'fade-in');
+                    }, remainingTime);
                 })
                 .catch(error => {
-                    console.error('Error:', error);
-                    showError('Wystąpił błąd podczas wysyłania zgłoszenia: ' + error.message);
-                })
-                .finally(() => {
-                    submitButton.disabled = false;
-                    submitButton.textContent = 'Wyślij zgłoszenie';
+                    console.error('Error fetching user info:', error);
+                    showError('Wystąpił błąd podczas ładowania danych. Spróbuj ponownie później.');
                 });
-    });
-</script>
+            } else {
+                showError('Nie udało się odczytać danych zgłoszenia. Spróbuj ponownie.');
+            }
+        }
+
+        document.getElementById('report-form').addEventListener('submit', function(e) {
+            e.preventDefault();
+
+            const submitButton = this.querySelector('button[type="submit"]');
+            submitButton.disabled = true;
+            submitButton.textContent = 'Wysyłanie...';
+
+            const formData = new FormData(this);
+            const jsonData = {
+                server: {
+                    port: formData.get('server-port'),
+                    ip: formData.get('server-ip')
+                },
+                reported: {
+                    nick: formData.get('reported-username'),
+                    ip: formData.get('reported-ip'),
+                    uuid: formData.get('reported-uuid')
+                },
+                reporting: {
+                    nick: formData.get('reporting-nick')
+                },
+                auth: formData.get('auth'),
+                reason: formData.get('report-reason')
+            };
+
+            fetch('../report', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Accept': 'application/json'
+                },
+                body: JSON.stringify(jsonData),
+                credentials: 'include'
+            })
+            .then(response => {
+                if (!response.ok) {
+                    return response.text().then(text => {
+                        throw new Error(`HTTP error! status: ${response.status}, message: ${text}`);
+                    });
+                }
+                return response.json();
+            })
+            .then(data => {
+                if (data.status === 'ok') {
+                    window.location.href = './send';
+                } else {
+                    showError('Wystąpił błąd podczas wysyłania zgłoszenia: ' + (data.message || 'Nieznany błąd'));
+                }
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                showError('Wystąpił błąd podczas wysyłania zgłoszenia: ' + error.message);
+            })
+            .finally(() => {
+                submitButton.disabled = false;
+                submitButton.textContent = 'Wyślij zgłoszenie';
+            });
+        });
+    </script>
 </body>
 </html>
