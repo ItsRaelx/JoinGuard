@@ -1,5 +1,6 @@
 from pydantic import BaseModel, Field, validator, constr
-from typing import Optional, List, re
+from typing import Optional, List
+import re
 
 
 class ServerData(BaseModel):
