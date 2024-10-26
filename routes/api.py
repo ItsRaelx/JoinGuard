@@ -6,7 +6,7 @@ from starlette.responses import HTMLResponse, RedirectResponse
 
 from helpers.database import check_api_key, add_api_key, get_api_key_count, is_spam_reporter
 from helpers.discord import send_webhook, get_code, get_user_data, get_oauth_url
-from helpers.models import LoginAttemptModel, ApiResponse, AltsReportModel, APICallbackModel, StateModel
+from helpers.models import LoginAttemptModel, ApiResponse, AltsReportModel, APICallbackModel, StateModel, APIKeyModel
 from helpers.signing import generate_signed_url
 
 DISCORD_WEBHOOK_ATTEMPT_URL = getenv("DISCORD_WEBHOOK_ATTEMPT_URL")
@@ -63,8 +63,8 @@ async def callback(callback_data: APICallbackModel = Depends()):
 
 
 @api_router.get("/check", response_model=ApiResponse)
-async def check_api_route(api: str):
-    result = await check_api_key(api)
+async def check_api_route(check: APIKeyModel = Depends()):
+    result = await check_api_key(check.api)
     if not result:
         return ApiResponse(status="Invalid API key", message="You have provided an invalid API key")
     return ApiResponse(status="ok", message="Valid API key")
@@ -82,7 +82,7 @@ async def login_attempt(attempt: LoginAttemptModel):
     }
     blacklist_url = generate_signed_url("https://joinguard.raidvm.com/report/add", blacklist_data)
 
-    spam_data = {"user_id": result.get('id')}
+    spam_data = {"user_id": result.get('_id')}
     spam_url = generate_signed_url("https://joinguard.raidvm.com/report/spam", spam_data)
 
     embed = {
@@ -120,7 +120,7 @@ async def report_alts(report: AltsReportModel):
     }
     blacklist_url = generate_signed_url("https://joinguard.raidvm.com/report/add", blacklist_data)
 
-    spam_data = {"user_id": result.get('id')}
+    spam_data = {"user_id": result.get('_id')}
     spam_url = generate_signed_url("https://joinguard.raidvm.com/report/spam", spam_data)
 
     alts_list = ", ".join(report.alts) if report.alts else "None reported"

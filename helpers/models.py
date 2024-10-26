@@ -50,6 +50,9 @@ class ApiResponse(BaseModel):
     status: str
     message: str
 
+class APIKeyModel(BaseModel):
+    api: str = Field(..., pattern=r'^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$')
+
 class AltsReportModel(BaseModel):
     server: ServerData
     alts: List[str] = Field(...)
