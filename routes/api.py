@@ -58,7 +58,7 @@ async def callback(callback_data: APICallbackModel = Depends()):
     result = await add_api_key(user_id, callback_data.state)
     if result is None:
         raise HTTPException(status_code=500, detail="Database error")
-    return RedirectResponse(url=f'/../pages/apiadded')
+    return RedirectResponse(url=f'/../pages/added')
 
 
 
